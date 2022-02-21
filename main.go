@@ -3,14 +3,15 @@ package main
 import (
 	"context"
 	"fmt"
+	"log"
+	"time"
+
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"go.mongodb.org/mongo-driver/mongo/readpref"
-	"log"
-	"time"
 )
 
 func main() {
@@ -56,6 +57,22 @@ func (h Handler) GetTodoList(c *fiber.Ctx) error {
 	return c.JSON(products)
 }
 
+func (h Handler) SaveTodo(c *fiber.Ctx) error {
+	ctx, _ := context.WithTimeout(context.Background(), 10*time.Second)
+
+	todoElement := todoElements{}
+	if err := c.BodyParser(&todoElement); err != nil {
+		return err
+	}
+
+	_, err := h.TodoElementsCollection.InsertOne(ctx, todoElement)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
 func NewApplication() *fiber.App {
 	app := fiber.New()
 	app.Use(cors.New())
@@ -85,6 +102,7 @@ func NewApplication() *fiber.App {
 	handler := NewHandler(mongoClient)
 
 	app.Get("/GetTodoList", handler.GetTodoList)
+	app.Post("/SaveTodo", handler.SaveTodo)
 
 	return app
 }
