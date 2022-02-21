@@ -8,6 +8,12 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
+type todoElements struct {
+	Id     int    `json:"id"`
+	Text   string `json:"text"`
+	Status string `json:"status"`
+}
+
 type Handler interface {
 	SaveTodo() interface{}
 	GetTodoElements() interface{}
@@ -32,13 +38,13 @@ func (d DatabaseHandler) SaveTodo(c *fiber.Ctx) interface{} {
 		return err
 	}
 
-	_, err := h.TodoElementsCollection.InsertOne(ctx, todoElement)
+	_, err := d.TodoElementsCollection.InsertOne(ctx, todoElement)
 	if err != nil {
 		return err
 	}
 
 	return nil
-	return nil
+
 }
 
 func (d DatabaseHandler) GetTodoElements() interface{} {
