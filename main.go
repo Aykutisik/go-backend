@@ -1,6 +1,9 @@
 package main
 
 import (
+	"Desktop/todo-backend/go-backend/handler"
+	"Desktop/todo-backend/go-backend/repository"
+	"Desktop/todo-backend/go-backend/service"
 	"context"
 	"fmt"
 	"log"
@@ -98,11 +101,14 @@ func NewApplication() *fiber.App {
 		AllowOrigins: "*",
 		AllowHeaders: "Origin, Content-Type, Accept",
 	}))
+	database := mongoClient.Database("todo_database")
+	collection := database.Collection("todo_list_elements")
+	repo := repository.NewRepository(database, mongoClient, collection)
+	service := service.NewService(repo)
+	handler := handler.NewHandler(service)
 
-	handler := NewHandler(mongoClient)
-
-	app.Get("/GetTodoList", handler.GetTodoList)
-	app.Post("/SaveTodo", handler.SaveTodo)
+	app.Get("/GetTodoElements", handler.GetTodoElements)
+	app.Post("/CreateTodo", handler.CreateTodo)
 
 	return app
 }

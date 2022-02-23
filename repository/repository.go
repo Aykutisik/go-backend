@@ -3,14 +3,15 @@ package repository
 import (
 	"Desktop/todo-backend/go-backend/model"
 	"context"
-	"go.mongodb.org/mongo-driver/bson"
-	"go.mongodb.org/mongo-driver/mongo"
 	"log"
 	"time"
+
+	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/mongo"
 )
 
 type Repository interface {
-	CreateTodo(s string) error
+	CreateTodo(todo model.TodoElements) error
 	GetTodoElements() (todos []model.TodoElements, err error)
 }
 
@@ -44,12 +45,10 @@ func (r repository) GetTodoElements() (todos []model.TodoElements, err error) {
 	return todos, err
 }
 
-func (r repository) CreateTodo(Text string) error {
+func (r repository) CreateTodo(todo model.TodoElements) error {
 	ctx, _ := context.WithTimeout(context.Background(), 10*time.Second)
 
-	todoElement := model.TodoElements{}
-
-	r.TodoElementsCollection.InsertOne(ctx, todoElement)
+	r.TodoElementsCollection.InsertOne(ctx, todo)
 
 	return nil
 }

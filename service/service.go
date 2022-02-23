@@ -1,24 +1,29 @@
 package service
 
-import "Desktop/todo-backend/go-backend/handler"
+import (
+	"Desktop/todo-backend/go-backend/model"
+	"Desktop/todo-backend/go-backend/repository"
+)
 
 type Service interface {
-	SaveTodo() interface{}
-	GetTodoElements() interface{}
+	CreateTodo(todo model.TodoElements) error
+	GetTodoElements() (todos []model.TodoElements, err error)
 }
 
-type ActionService struct {
-	handler handler.Handler
+type service struct {
+	repo repository.Repository
 }
 
-func newActionService(handler handler.Handler) Service {
-	return ActionService{handler}
+var _ Service = service{}
+
+func NewService(repo repository.Repository) Service {
+	return service{repo: repo}
 }
 
-func (a ActionService) SaveTodo() interface{} {
-	return a.handler.SaveTodo()
+func (s service) GetTodoElements() (todos []model.TodoElements, err error) {
+	return s.repo.GetTodoElements()
 }
 
-func (a ActionService) GetTodoElements() interface{} {
-	return a.handler.GetTodoElements()
+func (s service) CreateTodo(todo model.TodoElements) error {
+	return s.repo.CreateTodo(todo)
 }

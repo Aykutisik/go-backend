@@ -1,53 +1,51 @@
 package handler
 
 import (
-	"context"
-	"time"
+	"Desktop/todo-backend/go-backend/model"
+	"Desktop/todo-backend/go-backend/service"
 
-	"github.com/gofiber/fiber"
-	"go.mongodb.org/mongo-driver/mongo"
+	"github.com/gofiber/fiber/v2"
 )
 
-type todoElements struct {
-	Id     int    `json:"id"`
-	Text   string `json:"text"`
-	Status string `json:"status"`
-}
-
 type Handler interface {
-	SaveTodo() interface{}
-	GetTodoElements() interface{}
+	CreateTodo(ctx *fiber.Ctx) error
+	GetTodoElements(ctx *fiber.Ctx) error
 }
 
-type DatabaseHandler struct {
-	mongoClient            *mongo.Client
-	TodoDatabase           *mongo.Database
-	TodoElementsCollection *mongo.Collection
-	basketCollection       *mongo.Collection
+type handler struct {
+	service service.Service
 }
 
-func NewDatabaseHandler(mc *mongo.Client, td *mongo.Database, tec *mongo.Collection, bc *mongo.Collection) DatabaseHandler {
-	return DatabaseHandler{mongoClient: mc, TodoDatabase: td, TodoElementsCollection: tec, basketCollection: bc}
+var _ Handler = handler{}
+
+func NewHandler(service service.Service) Handler {
+	return handler{service: service}
 }
 
-func (d DatabaseHandler) SaveTodo(c *fiber.Ctx) interface{} {
-	ctx, _ := context.WithTimeout(context.Background(), 10*time.Second)
+type Response struct {
+	Error string      `json:"error"`
+	Data  interface{} `json:"data"`
+}
 
-	todoElement := todoElements{}
-	if err := c.BodyParser(&todoElement); err != nil {
-		return err
-	}
-
-	_, err := d.TodoElementsCollection.InsertOne(ctx, todoElement)
+func (h handler) GetTodoElements(c *fiber.Ctx) error {
+	model, err := h.service.GetTodoElements()
 	if err != nil {
-		return err
+		return c.Status(400).JSON(Response{Error: err.Error()})
 	}
 
-	return nil
-
+	return c.Status(200).JSON(Response{Data: model})
 }
 
-func (d DatabaseHandler) GetTodoElements() interface{} {
+func (h handler) CreateTodo(c *fiber.Ctx) error {
+	todo := model.TodoElements{}
 
-	return nil
+	err := c.BodyParser(&todo)
+
+	if err != nil {
+		return c.Status(400).JSON(Response{Error: err.Error()})
+	}
+
+	err = h.service.CreateTodo(todo)
+
+	return c.SendStatus(201)
 }
