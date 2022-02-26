@@ -8,6 +8,7 @@ import (
 type Service interface {
 	CreateTodo(todo model.TodoElements) error
 	GetTodoElements() (todos []model.TodoElements, err error)
+	DeleteTodo(id string) error
 }
 
 type service struct {
@@ -26,4 +27,9 @@ func (s service) GetTodoElements() (todos []model.TodoElements, err error) {
 
 func (s service) CreateTodo(todo model.TodoElements) error {
 	return s.repo.CreateTodo(todo)
+}
+
+func (s service) DeleteTodo(id string) error {
+
+	return s.repo.DeleteTodo(id)
 }

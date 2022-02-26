@@ -10,6 +10,7 @@ import (
 type Handler interface {
 	CreateTodo(ctx *fiber.Ctx) error
 	GetTodoElements(ctx *fiber.Ctx) error
+	DeleteTodo(ctx *fiber.Ctx) error
 }
 
 type handler struct {
@@ -48,4 +49,13 @@ func (h handler) CreateTodo(c *fiber.Ctx) error {
 	err = h.service.CreateTodo(todo)
 
 	return c.SendStatus(201)
+}
+
+func (h handler) DeleteTodo(c *fiber.Ctx) error {
+
+	id := c.Params("id")
+
+	err := h.service.DeleteTodo(id)
+
+	return err
 }

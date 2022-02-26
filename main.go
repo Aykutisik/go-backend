@@ -55,6 +55,7 @@ func NewApplication() *fiber.App {
 
 	app.Get("/GetTodoElements", handler.GetTodoElements)
 	app.Post("/CreateTodo", handler.CreateTodo)
+	app.Post("/DeleteTodo/:id", handler.DeleteTodo)
 
 	return app
 }

@@ -7,12 +7,14 @@ import (
 	"time"
 
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
 type Repository interface {
 	CreateTodo(todo model.TodoElements) error
 	GetTodoElements() (todos []model.TodoElements, err error)
+	DeleteTodo(id string) error
 }
 
 type repository struct {
@@ -49,6 +51,16 @@ func (r repository) CreateTodo(todo model.TodoElements) error {
 	ctx, _ := context.WithTimeout(context.Background(), 10*time.Second)
 
 	r.TodoElementsCollection.InsertOne(ctx, todo)
+
+	return nil
+}
+
+func (r repository) DeleteTodo(id string) error {
+	ctx, _ := context.WithTimeout(context.Background(), 10*time.Second)
+
+	idPrimitive, _ := primitive.ObjectIDFromHex(id)
+
+	r.TodoElementsCollection.DeleteOne(ctx, bson.M{"_id": idPrimitive})
 
 	return nil
 }
