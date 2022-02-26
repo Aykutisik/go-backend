@@ -33,7 +33,7 @@ func (h handler) GetTodoElements(c *fiber.Ctx) error {
 		return c.Status(400).JSON(Response{Error: err.Error()})
 	}
 
-	return c.Status(200).JSON(Response{Data: model})
+	return c.Status(200).JSON(model)
 }
 
 func (h handler) CreateTodo(c *fiber.Ctx) error {
