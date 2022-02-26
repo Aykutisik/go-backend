@@ -11,6 +11,7 @@ type Handler interface {
 	CreateTodo(ctx *fiber.Ctx) error
 	GetTodoElements(ctx *fiber.Ctx) error
 	DeleteTodo(ctx *fiber.Ctx) error
+	UpdateTodo(ctx *fiber.Ctx) error
 }
 
 type handler struct {
@@ -56,6 +57,21 @@ func (h handler) DeleteTodo(c *fiber.Ctx) error {
 	id := c.Params("id")
 
 	err := h.service.DeleteTodo(id)
+
+	return err
+}
+
+func (h handler) UpdateTodo(c *fiber.Ctx) error {
+
+	todo := model.TodoElements{}
+
+	err := c.BodyParser(&todo)
+
+	if err != nil {
+		return c.Status(400).JSON(Response{Error: err.Error()})
+	}
+
+	err = h.service.UpdateTodo(todo)
 
 	return err
 }

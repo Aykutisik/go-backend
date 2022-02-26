@@ -9,6 +9,7 @@ type Service interface {
 	CreateTodo(todo model.TodoElements) error
 	GetTodoElements() (todos []model.TodoElements, err error)
 	DeleteTodo(id string) error
+	UpdateTodo(todo model.TodoElements) error
 }
 
 type service struct {
@@ -32,4 +33,9 @@ func (s service) CreateTodo(todo model.TodoElements) error {
 func (s service) DeleteTodo(id string) error {
 
 	return s.repo.DeleteTodo(id)
+}
+
+func (s service) UpdateTodo(todo model.TodoElements) error {
+
+	return s.repo.UpdateTodo(todo)
 }

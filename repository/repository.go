@@ -15,6 +15,7 @@ type Repository interface {
 	CreateTodo(todo model.TodoElements) error
 	GetTodoElements() (todos []model.TodoElements, err error)
 	DeleteTodo(id string) error
+	UpdateTodo(todo model.TodoElements) error
 }
 
 type repository struct {
@@ -61,6 +62,21 @@ func (r repository) DeleteTodo(id string) error {
 	idPrimitive, _ := primitive.ObjectIDFromHex(id)
 
 	r.TodoElementsCollection.DeleteOne(ctx, bson.M{"_id": idPrimitive})
+
+	return nil
+}
+
+func (r repository) UpdateTodo(todo model.TodoElements) error {
+	ctx, _ := context.WithTimeout(context.Background(), 10*time.Second)
+
+	// idPrimitive, _ := primitive.ObjectIDFromHex(todo)
+	r.TodoElementsCollection.UpdateOne(
+		ctx,
+		bson.M{"_id": todo.Id},
+		bson.D{
+			{"$set", bson.D{{"status", todo.Status}}},
+		},
+	)
 
 	return nil
 }
