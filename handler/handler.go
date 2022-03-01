@@ -58,7 +58,11 @@ func (h handler) DeleteTodo(c *fiber.Ctx) error {
 
 	err := h.service.DeleteTodo(id)
 
-	return err
+	if err != nil {
+		return c.Status(400).JSON(Response{Error: err.Error()})
+	}
+
+	return c.SendStatus(200)
 }
 
 func (h handler) UpdateTodo(c *fiber.Ctx) error {
