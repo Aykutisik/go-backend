@@ -158,3 +158,70 @@ func TestDeleteTodo(t *testing.T) {
 		})
 
 }
+
+func TestUpdateTodo(t *testing.T) {
+	t.Run("UpdateTodo should response with status code 200 for status 0 to 1",
+		func(t *testing.T) {
+			mongoClient, err := mongo.NewClient(options.Client().ApplyURI("mongodb://mongoadmin:secret@localhost:27017/?authSource=admin"))
+			assert.Nil(t, err)
+
+			err = mongoClient.Connect(context.Background())
+			assert.Nil(t, err)
+
+			database := mongoClient.Database("todo_database")
+			collection := database.Collection("todo_list_elements")
+
+			repo := repository.NewRepository(database, mongoClient, collection)
+			service := service.NewService(repo)
+			handler := NewHandler(service)
+
+			app := fiber.New()
+
+			app.Post("/UpdateTodo", handler.CreateTodo)
+			testBody := model.TodoElements{Text: "testText", Status: 0}
+
+			requestByte, _ := json.Marshal(testBody)
+			requestReader := bytes.NewReader(requestByte)
+
+			req := httptest.NewRequest(http.MethodPost, fmt.Sprintf("/UpdateTodo"), requestReader)
+			req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+			res, err := app.Test(req)
+			assert.Nil(t, err)
+			fmt.Println(err)
+			assert.Equal(t, 201, res.StatusCode)
+
+		})
+
+	t.Run("UpdateTodo should response with status code 200 for status 1 to 0",
+		func(t *testing.T) {
+			mongoClient, err := mongo.NewClient(options.Client().ApplyURI("mongodb://mongoadmin:secret@localhost:27017/?authSource=admin"))
+			assert.Nil(t, err)
+
+			err = mongoClient.Connect(context.Background())
+			assert.Nil(t, err)
+
+			database := mongoClient.Database("todo_database")
+			collection := database.Collection("todo_list_elements")
+
+			repo := repository.NewRepository(database, mongoClient, collection)
+			service := service.NewService(repo)
+			handler := NewHandler(service)
+
+			app := fiber.New()
+
+			app.Post("/UpdateTodo", handler.CreateTodo)
+			testBody := model.TodoElements{Text: "testText", Status: 1}
+
+			requestByte, _ := json.Marshal(testBody)
+			requestReader := bytes.NewReader(requestByte)
+
+			req := httptest.NewRequest(http.MethodPost, fmt.Sprintf("/UpdateTodo"), requestReader)
+			req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+			res, err := app.Test(req)
+			assert.Nil(t, err)
+			fmt.Println(err)
+			assert.Equal(t, 201, res.StatusCode)
+
+		})
+
+}
