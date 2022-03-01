@@ -61,9 +61,9 @@ func (r repository) DeleteTodo(id string) error {
 
 	idPrimitive, _ := primitive.ObjectIDFromHex(id)
 
-	r.TodoElementsCollection.DeleteOne(ctx, bson.M{"_id": idPrimitive})
+	_, err := r.TodoElementsCollection.DeleteOne(ctx, bson.M{"_id": idPrimitive})
 
-	return nil
+	return err
 }
 
 func (r repository) UpdateTodo(todo model.TodoElements) error {

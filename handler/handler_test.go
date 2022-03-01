@@ -113,12 +113,9 @@ func TestDeleteTodo(t *testing.T) {
 
 			app := fiber.New()
 
-			app.Post("/DeleteTodo", handler.DeleteTodo)
-			// testBody := model.TodoElements{Text: "testText", Status: 0}
+			app.Post("/DeleteTodo/:id", handler.DeleteTodo)
 
-			// requestByte, _ := json.Marshal(testBody)
-			// requestReader := bytes.NewReader(requestByte)
-			id := "621a1b360e2eeedb9c57f99b"
+			id := "621a1b780e2eeedb9c57f99c"
 			req := httptest.NewRequest(http.MethodPost, fmt.Sprintf("/DeleteTodo/%s", id), nil)
 			req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
 			res, err := app.Test(req)
