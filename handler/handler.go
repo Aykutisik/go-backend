@@ -3,8 +3,9 @@ package handler
 import (
 	"Desktop/todo-backend/go-backend/model"
 	"Desktop/todo-backend/go-backend/service"
-
 	"github.com/gofiber/fiber/v2"
+	"net/http"
+	"strings"
 )
 
 type Handler interface {
@@ -45,6 +46,12 @@ func (h handler) CreateTodo(c *fiber.Ctx) error {
 
 	if err != nil {
 		return c.Status(400).JSON(Response{Error: err.Error()})
+	}
+
+	// if text is empty
+	if strings.Compare(todo.Text, "") != 0 {
+		c.Status(http.StatusBadRequest)
+		return nil
 	}
 
 	err = h.service.CreateTodo(todo)
