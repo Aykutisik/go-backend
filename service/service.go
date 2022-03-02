@@ -6,7 +6,7 @@ import (
 )
 
 type Service interface {
-	CreateTodo(todo model.TodoElements) error
+	CreateTodo(todo model.SendTodoElements) error
 	GetTodoElements() (todos []model.TodoElements, err error)
 	DeleteTodo(id string) error
 	UpdateTodo(todo model.TodoElements) error
@@ -26,7 +26,7 @@ func (s service) GetTodoElements() (todos []model.TodoElements, err error) {
 	return s.repo.GetTodoElements()
 }
 
-func (s service) CreateTodo(todo model.TodoElements) error {
+func (s service) CreateTodo(todo model.SendTodoElements) error {
 	return s.repo.CreateTodo(todo)
 }
 

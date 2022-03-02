@@ -7,3 +7,8 @@ type TodoElements struct {
 	Text   string             `json:"text"`
 	Status int                `json:"status"`
 }
+
+type SendTodoElements struct {
+	Text   string `json:"text"`
+	Status int    `json:"status"`
+}

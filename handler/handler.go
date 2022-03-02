@@ -40,7 +40,7 @@ func (h handler) GetTodoElements(c *fiber.Ctx) error {
 }
 
 func (h handler) CreateTodo(c *fiber.Ctx) error {
-	todo := model.TodoElements{}
+	todo := model.SendTodoElements{}
 
 	err := c.BodyParser(&todo)
 
@@ -49,7 +49,7 @@ func (h handler) CreateTodo(c *fiber.Ctx) error {
 	}
 
 	// if text is empty
-	if strings.Compare(todo.Text, "") != 0 {
+	if strings.Compare(todo.Text, "") == 0 {
 		c.Status(http.StatusBadRequest)
 		return nil
 	}

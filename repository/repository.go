@@ -12,7 +12,7 @@ import (
 )
 
 type Repository interface {
-	CreateTodo(todo model.TodoElements) error
+	CreateTodo(todo model.SendTodoElements) error
 	GetTodoElements() (todos []model.TodoElements, err error)
 	DeleteTodo(id string) error
 	UpdateTodo(todo model.TodoElements) error
@@ -48,7 +48,7 @@ func (r repository) GetTodoElements() (todos []model.TodoElements, err error) {
 	return todos, err
 }
 
-func (r repository) CreateTodo(todo model.TodoElements) error {
+func (r repository) CreateTodo(todo model.SendTodoElements) error {
 	ctx, _ := context.WithTimeout(context.Background(), 10*time.Second)
 
 	r.TodoElementsCollection.InsertOne(ctx, todo)

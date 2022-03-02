@@ -78,7 +78,7 @@ func TestCreateTodo(t *testing.T) {
 			app := fiber.New()
 
 			app.Post("/CreateTodo", handler.CreateTodo)
-			testBody := model.TodoElements{Text: "testText", Status: 0}
+			testBody := model.SendTodoElements{Text: "testText", Status: 0}
 
 			requestByte, _ := json.Marshal(testBody)
 			requestReader := bytes.NewReader(requestByte)
@@ -110,7 +110,7 @@ func TestCreateTodo(t *testing.T) {
 			app := fiber.New()
 
 			app.Post("/CreateTodo", handler.CreateTodo)
-			testBody := model.TodoElements{Text: "", Status: 0}
+			testBody := model.SendTodoElements{Text: "", Status: 0}
 
 			requestByte, _ := json.Marshal(testBody)
 			requestReader := bytes.NewReader(requestByte)
