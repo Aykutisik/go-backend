@@ -17,14 +17,14 @@ import (
 )
 
 func main() {
-	app := NewApplication()
+	err := NewApplication(8086)
+	if err != nil {
+		log.Fatal(err)
+	}
 
-	app.Listen(":8086")
 }
 
-func NewApplication() *fiber.App {
-	app := fiber.New()
-	app.Use(cors.New())
+func NewApplication(port int) error {
 
 	log.SetFlags(log.LstdFlags | log.Lshortfile)
 
@@ -40,23 +40,46 @@ func NewApplication() *fiber.App {
 
 	ctx, _ := context.WithTimeout(context.Background(), 10*time.Second)
 	if err = mongoClient.Ping(ctx, readpref.Primary()); err != nil {
-		fmt.Println("could not ping to mongo db service: %v\n", err)
+		fmt.Printf("could not ping to mongo db service: %v\n", err)
 	}
-
-	app.Use(cors.New(cors.Config{
-		AllowOrigins: "*",
-		AllowHeaders: "Origin, Content-Type, Accept",
-	}))
 	database := mongoClient.Database("todo_database")
 	collection := database.Collection("todo_list_elements")
 	repo := repository.NewRepository(database, mongoClient, collection)
 	service := service.NewService(repo)
 	handler := handler.NewHandler(service)
 
-	app.Get("/GetTodoElements", handler.GetTodoElements)
-	app.Post("/CreateTodo", handler.CreateTodo)
-	app.Put("/DeleteTodo/:id", handler.DeleteTodo)
-	app.Put("/UpdateTodo", handler.UpdateTodo)
+	app := NewServer(handler)
+	// app := fiber.New()
+	// app.Use(cors.New())
+	// app.Use(cors.New(cors.Config{
+	// 	AllowOrigins: "*",
+	// 	AllowHeaders: "Origin, Content-Type, Accept",
+	// }))
+
+	// app.Get("/GetTodoElements", handler.GetTodoElements)
+	// app.Post("/CreateTodo", handler.CreateTodo)
+	// app.Put("/DeleteTodo/:id", handler.DeleteTodo)
+	// app.Put("/UpdateTodo", handler.UpdateTodo)
+
+	err2 := app.Listen(fmt.Sprintf(":%d", port))
+
+	return err2
+}
+
+func NewServer(handler_all handler.Handler) *fiber.App {
+
+	app := fiber.New()
+	app.Use(cors.New())
+	app.Use(cors.New(cors.Config{
+		AllowOrigins: "*",
+		AllowHeaders: "Origin, Content-Type, Accept",
+	}))
+
+	app.Get("/GetTodoElements", handler_all.GetTodoElements)
+	app.Post("/CreateTodo", handler_all.CreateTodo)
+	app.Put("/DeleteTodo/:id", handler_all.DeleteTodo)
+	app.Put("/UpdateTodo", handler_all.UpdateTodo)
 
 	return app
+
 }
