@@ -92,7 +92,6 @@ func TestProvider(t *testing.T) {
 				return nil
 			},
 			"a todo item is created": func() error {
-
 				mock_service.EXPECT().CreateTodo(model.SendTodoElements{Text: "new todo element", Status: 0}).Return(nil)
 				return nil
 			},
@@ -119,8 +118,6 @@ func TestProvider(t *testing.T) {
 func getAllTodoElements() []model.TodoElements {
 	var list []model.TodoElements
 	//	[{ "_id": "62234346c2a65768f2c03ca5", "status": 0, "text": "drink water" }, { "_id": "6225bfaec2a65768f2c03ca6", "status": 0, "text": "bla bla" }]
-
-
 
 	var item model.TodoElements
 

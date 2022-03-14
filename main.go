@@ -49,21 +49,8 @@ func NewApplication(port int) error {
 	handler := handler.NewHandler(service)
 
 	app := NewServer(handler)
-	// app := fiber.New()
-	// app.Use(cors.New())
-	// app.Use(cors.New(cors.Config{
-	// 	AllowOrigins: "*",
-	// 	AllowHeaders: "Origin, Content-Type, Accept",
-	// }))
 
-	// app.Get("/GetTodoElements", handler.GetTodoElements)
-	// app.Post("/CreateTodo", handler.CreateTodo)
-	// app.Put("/DeleteTodo/:id", handler.DeleteTodo)
-	// app.Put("/UpdateTodo", handler.UpdateTodo)
-
-	err2 := app.Listen(fmt.Sprintf(":%d", port))
-
-	return err2
+	return app.Listen(fmt.Sprintf(":%d", port))
 }
 
 func NewServer(handler_all handler.Handler) *fiber.App {
